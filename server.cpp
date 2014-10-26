@@ -95,24 +95,34 @@ BOOL DoAuthentication (void)
 
 	printf("g_pOutBuf[22]=%d\n",g_pOutBuf[22]);
 
-	if (g_pOutBuf[22] == 100) 
+	if (g_pOutBuf[22] == 224 || g_pOutBuf[22] == 100) 
 	{
 		printf("NTLMv2\n");
 		nthash = (PBYTE) malloc (16);
 		cbIn = g_pOutBuf[24] + (g_pOutBuf[25] << 8);
 		memcpy (nthash, (void *)&g_pOutBuf[cbIn], 16);
 
-		clientnonce = (PBYTE) malloc (84);
 		cbIn += 16;
-		memcpy (clientnonce, (void *)&g_pOutBuf[cbIn], 84);
-
+		clientnonce = (PBYTE) malloc (cbOut - cbIn - 16);
+		//memcpy (clientnonce, (void *)&g_pOutBuf[cbIn], 84);
+		memcpy (clientnonce, (void *)&g_pOutBuf[cbIn], cbOut - cbIn - 16);
 
 		printf("Nonce:  ");
 		PrintHex (8, nonce);
 		printf("\nClientNonce: ");
-		PrintHex (84, clientnonce);
+		PrintHex (cbOut - cbIn - 16, clientnonce);
 		printf("\nNThash: ");
 		PrintHex (16, nthash);
+		printf("\n");
+		
+		printf("\nJTR: %s::%s", (unsigned char *)((int)cbUserName+1), (unsigned char *)pUserName);
+		printf(":");
+		PrintHex (8, nonce);
+		printf(":");
+		PrintHex (16, nthash);
+		printf(":");
+		PrintHex (cbOut - cbIn - 16, clientnonce);
+
 		printf("\n");
 	}
 	else if (g_pOutBuf[22] == 24)
