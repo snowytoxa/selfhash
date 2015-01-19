@@ -95,7 +95,7 @@ BOOL DoAuthentication (void)
 
 	printf("g_pOutBuf[22]=%d\n",g_pOutBuf[22]);
 
-	if (g_pOutBuf[22] == 224 || g_pOutBuf[22] == 100) 
+	if (g_pOutBuf[22] > 24) 
 	{
 		printf("NTLMv2\n");
 		nthash = (PBYTE) malloc (16);
